@@ -37,5 +37,5 @@ cc_module(
 # cc_module_dump()
 
 add_executable(cc_module ${main_SOURCE})
-target_link_directories(cc_module PRIVATE ${main_INCLUDE})
+target_include_directories(cc_module PRIVATE ${main_INCLUDE})
 target_link_libraries(cc_module PRIVATE ${main_DEPENDS})
