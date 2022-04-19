@@ -6,9 +6,9 @@ function(cc_module)
     set(single_args 
         NAME
         TYPE
-        FOLDER
     )
     set(multi_args
+        FOLDER
         SOURCE
         PUBLIC
         PROTECTED
@@ -73,15 +73,17 @@ function(cc_module)
         set(MODULE_ALL_INCLUDES ${MODULE_ALL_INCLUDES} ${module_deps_include})
     endforeach()
 
-    if(MODULE_FOLDER)
-        file(GLOB_RECURSE MODULE_ALL_SOURCES CONFIGURE_DEPENDS
-            ${MODULE_FOLDER}/*.c
-            ${MODULE_FOLDER}/*.C
-            ${MODULE_FOLDER}/*.cc
-            ${MODULE_FOLDER}/*.cpp
+    set(MODULE_ALL_SOURCES ${MODULE_SOURCE})
+
+    foreach(module_dir IN LISTS MODULE_FOLDER)
+        file(GLOB_RECURSE MODULE_FOLDER_SRCS CONFIGURE_DEPENDS
+            ${module_dir}/*.c
+            ${module_dir}/*.C
+            ${module_dir}/*.cc
+            ${module_dir}/*.cpp
         )
-    endif()
-    set(MODULE_ALL_SOURCES ${MODULE_ALL_SOURCES} ${MODULE_SOURCE})
+        set(MODULE_ALL_SOURCES ${MODULE_ALL_SOURCES} ${MODULE_FOLDER_SRCS})
+    endforeach()
 
     if(MODULE_TYPE STREQUAL "SOURCE")
         set(${MODULE_NAME}_SOURCE     ${MODULE_ALL_SOURCES}   PARENT_SCOPE)

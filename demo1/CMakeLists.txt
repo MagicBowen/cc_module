@@ -34,7 +34,7 @@ cc_module(
     DEPENDS   service
 )
 
-# cc_module_dump()
+cc_module_dump()
 
 add_executable(cc_module_demo1 ${main_SOURCE})
 target_include_directories(cc_module_demo1 PRIVATE ${main_INCLUDE})
