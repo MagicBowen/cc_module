@@ -10,6 +10,8 @@ function(cc_module)
     set(multi_args
         FOLDER
         SOURCE
+        EXCLUDE
+        EXCLUDE_SOURCE
         PUBLIC
         PROTECTED
         PRIVATE
@@ -24,7 +26,7 @@ function(cc_module)
         return()
     endif()
 
-    set(module_types "SOURCE" "INTERFACE" "OBJECT" "STATIC" "SHARED" "EXECUTABLE")
+    set(module_types "MODULE" "INTERFACE" "OBJECT" "STATIC" "SHARED" "EXECUTABLE")
 
     if(MODULE_TYPE)
         list(FIND module_types ${MODULE_TYPE} type_index)
@@ -33,7 +35,7 @@ function(cc_module)
             return()
         endif()        
     else()
-        set(MODULE_TYPE "SOURCE")
+        set(MODULE_TYPE "MODULE")
     endif()
 
     get_property(module_list GLOBAL PROPERTY module_list_property)
@@ -85,7 +87,23 @@ function(cc_module)
         set(MODULE_ALL_SOURCES ${MODULE_ALL_SOURCES} ${MODULE_FOLDER_SRCS})
     endforeach()
 
-    if(MODULE_TYPE STREQUAL "SOURCE")
+    set(MODULE_ALL_EXCLUDE_SOURCES ${MODULE_EXCLUDE_SOURCE})
+
+    foreach(module_exclude_dir IN LISTS MODULE_EXCLUDE)
+        file(GLOB_RECURSE MODULE_EXCLUDE_FOLDER_SRCS CONFIGURE_DEPENDS
+            ${module_exclude_dir}/*.c
+            ${module_exclude_dir}/*.C
+            ${module_exclude_dir}/*.cc
+            ${module_exclude_dir}/*.cpp
+        )
+        set(MODULE_ALL_EXCLUDE_SOURCES ${MODULE_ALL_EXCLUDE_SOURCES} ${MODULE_EXCLUDE_FOLDER_SRCS})
+    endforeach()
+
+    if(MODULE_ALL_EXCLUDE_SOURCES)
+        list(REMOVE_ITEM MODULE_ALL_SOURCES ${MODULE_ALL_EXCLUDE_SOURCES})
+    endif()
+
+    if(MODULE_TYPE STREQUAL "MODULE")
         set(${MODULE_NAME}_SOURCE     ${MODULE_ALL_SOURCES}   PARENT_SCOPE)
         set(${MODULE_NAME}_INCLUDE    ${MODULE_ALL_INCLUDES}  PARENT_SCOPE)
         set(${MODULE_NAME}_PUBLIC     ${MODULE_ALL_PUBLIC}    PARENT_SCOPE)
